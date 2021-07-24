@@ -134,7 +134,7 @@ namespace QuantumCompressors.BuildingComponents
             if (useSecondaryInput)
             {
                 ISecondaryInput component = base.GetComponent<ISecondaryInput>();
-                result = Grid.OffsetCell(building.NaturalBuildingCell(), component.GetSecondaryConduitOffset()); //conduitType
+                result = Grid.OffsetCell(building.NaturalBuildingCell(), component.GetSecondaryConduitOffset(ConduitType)); //conduitType
             }
             else
             {

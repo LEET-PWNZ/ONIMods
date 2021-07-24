@@ -30,7 +30,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 			buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
 			buildingDef.AudioCategory = "HollowMetal";
 			buildingDef.RequiresPowerInput = true;
-			buildingDef.RequiredDlcId = "EXPANSION1_ID";
+			buildingDef.RequiredDlcIds = new string[] { "EXPANSION1_ID" };
 			buildingDef.EnergyConsumptionWhenActive = QuantumStorage.QuantumStoragePowerConsume;
 			//buildingDef.OnePerWorld = true;
 			//buildingDef.UtilityInputOffset = inputPort.offset;

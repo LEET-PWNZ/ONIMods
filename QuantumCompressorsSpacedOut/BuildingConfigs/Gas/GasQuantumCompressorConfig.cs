@@ -31,7 +31,7 @@ namespace QuantumCompressors.BuildingConfigs.Gas
             buildingDef.RequiresPowerInput = true;
             buildingDef.EnergyConsumptionWhenActive = QuantumStorage.QuantumStoragePowerConsume;
             buildingDef.AudioCategory = "HollowMetal";
-            buildingDef.RequiredDlcId = "EXPANSION1_ID";
+            buildingDef.RequiredDlcIds = new string[] { "EXPANSION1_ID" };
             //buildingDef.OnePerWorld = true;
             //buildingDef.UtilityInputOffset = inputPort.offset;
             //buildingDef.UtilityOutputOffset = outputPort.offset;

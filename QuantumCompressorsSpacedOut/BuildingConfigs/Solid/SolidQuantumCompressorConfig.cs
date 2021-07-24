@@ -33,7 +33,7 @@ namespace QuantumCompressors.BuildingConfigs.Solid
 			buildingDef.Floodable = false;
 			buildingDef.AudioCategory = "Metal";
 			buildingDef.Overheatable = false;
-			buildingDef.RequiredDlcId = "EXPANSION1_ID";
+			buildingDef.RequiredDlcIds =new string[] { "EXPANSION1_ID" };
 			buildingDef.ViewMode = OverlayModes.Logic.ID;
 			buildingDef.RequiresPowerInput = true;
 			buildingDef.EnergyConsumptionWhenActive = QuantumStorage.QuantumStoragePowerConsume;

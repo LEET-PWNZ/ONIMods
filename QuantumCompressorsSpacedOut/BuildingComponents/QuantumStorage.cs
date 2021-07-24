@@ -83,6 +83,7 @@ namespace QuantumCompressors.BuildingComponents
         protected override void OnSpawn()
         {
             base.OnSpawn();
+            Debug.Log("QuantumStorage spawned "+Enum.GetName(typeof(ConduitType),conduitType));
             BuildingComplete com = GetComponent<BuildingComplete>();
             itemConfig = new QuantumStorageItem
             {
@@ -95,5 +96,7 @@ namespace QuantumCompressors.BuildingComponents
             quantumStorage.StorageItems.Add(itemConfig);
             //name = "QuantumStorage" + Enum.GetName(typeof(ConduitType), conduitType)+ com.GetMyWorldId().ToString();
         }
+
+
     }
 }

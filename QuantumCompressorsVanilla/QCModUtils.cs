@@ -21,9 +21,17 @@ namespace QuantumCompressors
 
         public static void AddStructureTech(Db db,string techCategory, string structureId)
         {
-            List<string> techs = new List<string>((string[])Database.Techs.TECH_GROUPING[techCategory]);
-            techs.Add(structureId);
-            Database.Techs.TECH_GROUPING[techCategory] = techs.ToArray();
+            //List<string> techs = new List<string>((string[])Database.Techs.TECH_GROUPING[techCategory]);
+            //techs.Add(structureId);
+            //Database.Techs.TECH_GROUPING[techCategory] = techs.ToArray();
+
+
+            var tec = db.Techs.resources.Where(t => t.Id == techCategory).FirstOrDefault();
+            if (tec != null)
+            {
+                tec.unlockedItemIDs.Add(structureId);
+            }
+
         }
 
     }
