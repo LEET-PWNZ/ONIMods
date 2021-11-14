@@ -1,5 +1,5 @@
 # VANILLA_ID, EXPANSION1_ID, ALL
-supportedContent: EXPANSION1_ID
+supportedContent: VANILLA_ID
 minimumSupportedBuild: 484114
 APIVersion: 2
 version: "1.2"

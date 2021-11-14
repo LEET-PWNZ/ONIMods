@@ -35,8 +35,11 @@ namespace QuantumCompressors.BuildingConfigs.Gas
             //buildingDef.OnePerWorld = true;
             //buildingDef.UtilityInputOffset = inputPort.offset;
             //buildingDef.UtilityOutputOffset = outputPort.offset;
+            buildingDef.PowerInputOffset = new CellOffset(1, 0);
+            buildingDef.UtilityInputOffset = new CellOffset(0, 0);
+            buildingDef.UtilityOutputOffset = new CellOffset(0, 2);
             List<LogicPorts.Port> list = new List<LogicPorts.Port>();
-            list.Add(LogicPorts.Port.OutputPort(PORT_ID, new CellOffset(0, 0), STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE, false, false));
+            list.Add(LogicPorts.Port.OutputPort(PORT_ID, new CellOffset(0, 2), STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE, false, false));
             buildingDef.LogicOutputPorts = list;
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, ID);
             return buildingDef;

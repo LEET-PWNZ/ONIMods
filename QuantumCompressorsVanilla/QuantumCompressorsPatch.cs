@@ -2,7 +2,6 @@
 using QuantumCompressors.BuildingComponents;
 using QuantumCompressors.BuildingConfigs.Gas;
 using QuantumCompressors.BuildingConfigs.Liquid;
-using QuantumCompressors.BuildingConfigs.Solid;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,9 +14,7 @@ namespace QuantumCompressors
         {
             QCModUtils.AddStructure("Base", GasQuantumCompressorConfig.ID, GasQuantumCompressorConfig.NAME, GasQuantumCompressorConfig.DESC, GasQuantumCompressorConfig.DESC);
             QCModUtils.AddStructure("Base", LiquidQuantumCompressorConfig.ID, LiquidQuantumCompressorConfig.NAME, LiquidQuantumCompressorConfig.DESC, LiquidQuantumCompressorConfig.DESC);
-            //TODO Finish Solids Compressor
-            //QCModUtils.AddStructure("Base", SolidQuantumCompressorConfig.ID, SolidQuantumCompressorConfig.NAME, SolidQuantumCompressorConfig.DESC, SolidQuantumCompressorConfig.DESC);
-
+            
             QCModUtils.AddStructure("HVAC", GasCompressorIntakeConfig.ID, GasCompressorIntakeConfig.NAME, GasCompressorIntakeConfig.DESC, GasCompressorIntakeConfig.DESC);
             QCModUtils.AddStructure("HVAC", GasQuantumFilterOutletConfig.ID, GasQuantumFilterOutletConfig.NAME, GasQuantumFilterOutletConfig.DESC, GasQuantumFilterOutletConfig.DESC);
             QCModUtils.AddStructure("HVAC", GasQuantumFilterDualConfig.ID, GasQuantumFilterDualConfig.NAME, GasQuantumFilterDualConfig.DESC, GasQuantumFilterDualConfig.DESC);
@@ -40,8 +37,7 @@ namespace QuantumCompressors
             {
                 QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumCompressorConfig.ID);
                 QCModUtils.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumCompressorConfig.ID);
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", SolidQuantumCompressorConfig.ID);
-
+                
                 QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterOutletConfig.ID);
                 QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasCompressorIntakeConfig.ID);
                 QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterDualConfig.ID);
