@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantumCompressorsVanilla", "QuantumCompressorsVanilla\QuantumCompressorsVanilla.csproj", "{D368ADCF-E5B5-4148-B586-15DEE1AD2C5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantum Compressors", "QuantumCompressors\Quantum Compressors.csproj", "{D368ADCF-E5B5-4148-B586-15DEE1AD2C5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantumCompressorsSpacedOut", "QuantumCompressorsSpacedOut\QuantumCompressorsSpacedOut.csproj", "{BAA2252C-FDF8-4962-8927-A9BCCA064F99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ONI Mods Library", "ONI Mods Library\ONI Mods Library.csproj", "{D4E6C29D-0FAA-4688-AE3A-02E9AF317BB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{D368ADCF-E5B5-4148-B586-15DEE1AD2C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D368ADCF-E5B5-4148-B586-15DEE1AD2C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D368ADCF-E5B5-4148-B586-15DEE1AD2C5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BAA2252C-FDF8-4962-8927-A9BCCA064F99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAA2252C-FDF8-4962-8927-A9BCCA064F99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAA2252C-FDF8-4962-8927-A9BCCA064F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAA2252C-FDF8-4962-8927-A9BCCA064F99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4E6C29D-0FAA-4688-AE3A-02E9AF317BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4E6C29D-0FAA-4688-AE3A-02E9AF317BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4E6C29D-0FAA-4688-AE3A-02E9AF317BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4E6C29D-0FAA-4688-AE3A-02E9AF317BB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

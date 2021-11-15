@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("QuantumCompressorsMod")]
+[assembly: AssemblyTitle("ONIModLib")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("QuantumCompressorsMod")]
+[assembly: AssemblyProduct("ONIModLib")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("baa2252c-fdf8-4962-8927-a9bcca064f99")]
+[assembly: Guid("d4e6c29d-0faa-4688-ae3a-02e9af317bb6")]
 
 // Version information for an assembly consists of the following four values:
 //
