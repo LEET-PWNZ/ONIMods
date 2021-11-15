@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
+using ONIModsLibrary.Classes;
 using QuantumCompressors.BuildingComponents;
 using QuantumCompressors.BuildingConfigs.Gas;
 using QuantumCompressors.BuildingConfigs.Liquid;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace QuantumCompressors
 {
@@ -12,16 +11,16 @@ namespace QuantumCompressors
     {
         private static void Prefix() 
         {
-            QCModUtils.AddStructure("Base", GasQuantumCompressorConfig.ID, GasQuantumCompressorConfig.NAME, GasQuantumCompressorConfig.DESC, GasQuantumCompressorConfig.DESC);
-            //QCModUtils.AddStructure("Base", LiquidQuantumCompressorConfig.ID, LiquidQuantumCompressorConfig.NAME, LiquidQuantumCompressorConfig.DESC, LiquidQuantumCompressorConfig.DESC);
+            ONIModFunctions.AddStructure("Base", GasQuantumCompressorConfig.ID, GasQuantumCompressorConfig.NAME, GasQuantumCompressorConfig.DESC, GasQuantumCompressorConfig.DESC);
+            //ONIModFunctions.AddStructure("Base", LiquidQuantumCompressorConfig.ID, LiquidQuantumCompressorConfig.NAME, LiquidQuantumCompressorConfig.DESC, LiquidQuantumCompressorConfig.DESC);
             
-            //QCModUtils.AddStructure("HVAC", GasCompressorIntakeConfig.ID, GasCompressorIntakeConfig.NAME, GasCompressorIntakeConfig.DESC, GasCompressorIntakeConfig.DESC);
-            //QCModUtils.AddStructure("HVAC", GasQuantumFilterOutletConfig.ID, GasQuantumFilterOutletConfig.NAME, GasQuantumFilterOutletConfig.DESC, GasQuantumFilterOutletConfig.DESC);
-            //QCModUtils.AddStructure("HVAC", GasQuantumFilterDualConfig.ID, GasQuantumFilterDualConfig.NAME, GasQuantumFilterDualConfig.DESC, GasQuantumFilterDualConfig.DESC);
+            //ONIModFunctions.AddStructure("HVAC", GasCompressorIntakeConfig.ID, GasCompressorIntakeConfig.NAME, GasCompressorIntakeConfig.DESC, GasCompressorIntakeConfig.DESC);
+            //ONIModFunctions.AddStructure("HVAC", GasQuantumFilterOutletConfig.ID, GasQuantumFilterOutletConfig.NAME, GasQuantumFilterOutletConfig.DESC, GasQuantumFilterOutletConfig.DESC);
+            //ONIModFunctions.AddStructure("HVAC", GasQuantumFilterDualConfig.ID, GasQuantumFilterDualConfig.NAME, GasQuantumFilterDualConfig.DESC, GasQuantumFilterDualConfig.DESC);
 
-            //QCModUtils.AddStructure("Plumbing", LiquidCompressorIntakeConfig.ID, LiquidCompressorIntakeConfig.NAME, LiquidCompressorIntakeConfig.DESC, LiquidCompressorIntakeConfig.DESC);
-            //QCModUtils.AddStructure("Plumbing", LiquidQuantumFilterOutletConfig.ID, LiquidQuantumFilterOutletConfig.NAME, LiquidQuantumFilterOutletConfig.DESC, LiquidQuantumFilterOutletConfig.DESC);
-            //QCModUtils.AddStructure("Plumbing", LiquidQuantumFilterDualConfig.ID, LiquidQuantumFilterDualConfig.NAME, LiquidQuantumFilterDualConfig.DESC, LiquidQuantumFilterDualConfig.DESC);
+            //ONIModFunctions.AddStructure("Plumbing", LiquidCompressorIntakeConfig.ID, LiquidCompressorIntakeConfig.NAME, LiquidCompressorIntakeConfig.DESC, LiquidCompressorIntakeConfig.DESC);
+            //ONIModFunctions.AddStructure("Plumbing", LiquidQuantumFilterOutletConfig.ID, LiquidQuantumFilterOutletConfig.NAME, LiquidQuantumFilterOutletConfig.DESC, LiquidQuantumFilterOutletConfig.DESC);
+            //ONIModFunctions.AddStructure("Plumbing", LiquidQuantumFilterDualConfig.ID, LiquidQuantumFilterDualConfig.NAME, LiquidQuantumFilterDualConfig.DESC, LiquidQuantumFilterDualConfig.DESC);
         }
 
 
@@ -35,16 +34,16 @@ namespace QuantumCompressors
             var db = Db.Get();
             if (db != null)
             {
-                QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumCompressorConfig.ID);
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumCompressorConfig.ID);
+                ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumCompressorConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumCompressorConfig.ID);
                 
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterOutletConfig.ID);
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasCompressorIntakeConfig.ID);
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterDualConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterOutletConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasCompressorIntakeConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterDualConfig.ID);
 
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumFilterOutletConfig.ID);                
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", LiquidCompressorIntakeConfig.ID);
-                //QCModUtils.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumFilterDualConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumFilterOutletConfig.ID);                
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", LiquidCompressorIntakeConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumFilterDualConfig.ID);
             }
         }
     }

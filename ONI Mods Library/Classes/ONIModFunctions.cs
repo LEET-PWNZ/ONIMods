@@ -1,13 +1,9 @@
-﻿using Database;
-using STRINGS;
-using System;
-using System.Collections.Generic;
+﻿using STRINGS;
 using System.Linq;
-using System.Text;
 
-namespace QuantumCompressors
+namespace ONIModsLibrary.Classes
 {
-    public class QCModUtils
+    public class ONIModFunctions
     {
         public static void AddStructure(string structureCategory, string structureId, string structureName, string structureDesc, string structureEffect)
         {
@@ -16,16 +12,11 @@ namespace QuantumCompressors
             Strings.Add(new string[] { "STRINGS.BUILDINGS.PREFABS." + upperCaseID + ".DESC", structureDesc });
             Strings.Add(new string[] { "STRINGS.BUILDINGS.PREFABS." + upperCaseID + ".EFFECT", structureEffect });
             ModUtil.AddBuildingToPlanScreen(structureCategory, structureId);
-            
+
         }
 
-        public static void AddStructureTech(Db db,string techCategory, string structureId)
+        public static void AddStructureTech(Db db, string techCategory, string structureId)
         {
-            //List<string> techs = new List<string>((string[])Database.Techs.TECH_GROUPING[techCategory]);
-            //techs.Add(structureId);
-            //Database.Techs.TECH_GROUPING[techCategory] = techs.ToArray();
-
-
             var tec = db.Techs.resources.Where(t => t.Id == techCategory).FirstOrDefault();
             if (tec != null)
             {
@@ -33,6 +24,5 @@ namespace QuantumCompressors
             }
 
         }
-
     }
 }
