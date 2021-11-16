@@ -14,7 +14,7 @@ namespace QuantumCompressors
             ONIModFunctions.AddStructure("Base", GasQuantumCompressorConfig.ID, GasQuantumCompressorConfig.NAME, GasQuantumCompressorConfig.DESC, GasQuantumCompressorConfig.DESC);
             //ONIModFunctions.AddStructure("Base", LiquidQuantumCompressorConfig.ID, LiquidQuantumCompressorConfig.NAME, LiquidQuantumCompressorConfig.DESC, LiquidQuantumCompressorConfig.DESC);
             
-            //ONIModFunctions.AddStructure("HVAC", GasCompressorIntakeConfig.ID, GasCompressorIntakeConfig.NAME, GasCompressorIntakeConfig.DESC, GasCompressorIntakeConfig.DESC);
+            ONIModFunctions.AddStructure("HVAC", GasCompressorIntakeConfig.ID, GasCompressorIntakeConfig.NAME, GasCompressorIntakeConfig.DESC, GasCompressorIntakeConfig.DESC);
             //ONIModFunctions.AddStructure("HVAC", GasQuantumFilterOutletConfig.ID, GasQuantumFilterOutletConfig.NAME, GasQuantumFilterOutletConfig.DESC, GasQuantumFilterOutletConfig.DESC);
             //ONIModFunctions.AddStructure("HVAC", GasQuantumFilterDualConfig.ID, GasQuantumFilterDualConfig.NAME, GasQuantumFilterDualConfig.DESC, GasQuantumFilterDualConfig.DESC);
 
@@ -34,7 +34,7 @@ namespace QuantumCompressors
             var db = Db.Get();
             if (db != null)
             {
-                ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumCompressorConfig.ID);
+                //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumCompressorConfig.ID);
                 //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", LiquidQuantumCompressorConfig.ID);
                 
                 //ONIModFunctions.AddStructureTech(db, "DupeTrafficControl", GasQuantumFilterOutletConfig.ID);

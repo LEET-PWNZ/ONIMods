@@ -20,7 +20,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 		public override BuildingDef CreateBuildingDef()
 		{
 
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valveliquid_logic_kanim", 30, 10f, QuantumStorage.IntakeCost, QuantumStorage.IntakeMats,
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valveliquid_logic_kanim", 30, 10f, QCProperties.IntakeCost, QCProperties.IntakeMats,
 				1600f, BuildLocationRule.Anywhere, TUNING.BUILDINGS.DECOR.PENALTY.TIER0, TUNING.NOISE_POLLUTION.NOISY.TIER1, 0.2f);
 			buildingDef.InputConduitType = outputPort.conduitType;
 			//buildingDef.OutputConduitType = secondaryPort.conduitType;

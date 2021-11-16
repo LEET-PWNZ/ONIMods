@@ -21,7 +21,7 @@ namespace QuantumCompressors.BuildingConfigs.Gas
 		public static string EFFECT { get { return DESC; } }
 		public override BuildingDef CreateBuildingDef()
 		{
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valvegas_logic_kanim", 30, 10f, QuantumStorage.DualPortCost, QuantumStorage.DualPortMats,
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valvegas_logic_kanim", 30, 10f, QCProperties.DualPortCost, QCProperties.DualPortMats,
 				1600f, BuildLocationRule.Anywhere, TUNING.BUILDINGS.DECOR.PENALTY.TIER0, TUNING.NOISE_POLLUTION.NOISY.TIER1, 0.2f);
 			buildingDef.InputConduitType = inputPort.conduitType;
 			buildingDef.OutputConduitType = outputPort.conduitType;

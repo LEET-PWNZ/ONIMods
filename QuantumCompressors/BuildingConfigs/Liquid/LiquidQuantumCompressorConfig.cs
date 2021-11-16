@@ -1,4 +1,5 @@
-﻿using QuantumCompressors.BuildingComponents;
+﻿using ONIModsLibrary.Classes;
+using QuantumCompressors.BuildingComponents;
 using STRINGS;
 using System;
 using System.Collections.Generic;
@@ -21,14 +22,15 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 		//private ConduitPortInfo outputPort = new ConduitPortInfo(conduitType, new CellOffset(0,0));
 		//private ConduitPortInfo inputPort = new ConduitPortInfo(conduitType, new CellOffset(1,2));
 		private Storage storage;
+		private ONIModConfigManager<QCModConfig> modConf = ONIModConfigManager<QCModConfig>.getInstance();
 		public override BuildingDef CreateBuildingDef()
 		{
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f, QuantumStorage.CompressorCost, QuantumStorage.CompressorMats, 1000f, BuildLocationRule.OnFloor, TUNING.BUILDINGS.DECOR.PENALTY.TIER1, NOISE_POLLUTION.NOISY.TIER0, 0.2f);
+			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f, QCProperties.CompressorCost, QCProperties.CompressorMats, 1000f, BuildLocationRule.OnFloor, TUNING.BUILDINGS.DECOR.PENALTY.TIER1, NOISE_POLLUTION.NOISY.TIER0, 0.2f);
             buildingDef.Floodable = false;
 			buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
 			buildingDef.AudioCategory = "HollowMetal";
 			buildingDef.RequiresPowerInput = true;
-			buildingDef.EnergyConsumptionWhenActive = QuantumStorage.QuantumStoragePowerConsume;
+			buildingDef.EnergyConsumptionWhenActive = modConf.CurrentConfig.storagePowerConsumption;
 			buildingDef.PowerInputOffset = new CellOffset(1, 0);
 			buildingDef.UtilityInputOffset = new CellOffset(0, 0);
 			buildingDef.UtilityOutputOffset = new CellOffset(0, 2);
@@ -45,7 +47,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 			storage.showDescriptor = true;
 			storage.allowItemRemoval = false;
 			storage.storageFilters = STORAGEFILTERS.LIQUIDS;
-			storage.capacityKg = (5000f*QuantumStorage.QuantumStorageMultiplier);
+			storage.capacityKg = modConf.CurrentConfig.liquidStorageCapacityKg;
 			storage.SetDefaultStoredItemModifiers(GasReservoirConfig.ReservoirStoredItemModifiers);
 			this.storage = storage;
 			go.AddOrGet<SmartReservoir>();
