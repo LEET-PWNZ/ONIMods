@@ -17,7 +17,7 @@ namespace ONIModsLibrary.Classes
 
         public static void AddStructureTech(Db db, string techCategory, string structureId)
         {
-            var tec = db.Techs.resources.Where(t => t.Id == techCategory).FirstOrDefault();
+            var tec = db.Techs.resources.Where(t => t.Id.ToUpper() == techCategory.ToUpper()).FirstOrDefault();
             if (tec != null)
             {
                 tec.unlockedItemIDs.Add(structureId);

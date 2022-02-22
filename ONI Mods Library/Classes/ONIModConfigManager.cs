@@ -8,27 +8,27 @@ namespace ONIModsLibrary.Classes
     {
         public readonly float gasStorageCapacityMultiplier, liquidStorageCapacityMultiplier;
 
-        private static ONIModConfigManager<T> singleInstance;
-        private readonly string configDirPath, configFileName;
+        private static ONIModConfigManager<T> _singleInstance;
+        private readonly string _configDirPath, _configFileName;
         public readonly T CurrentConfig;
         private ONIModConfigManager()
         {
-            configDirPath = Directory.GetParent(System.Reflection.Assembly.GetAssembly(typeof(T)).Location).FullName + Path.DirectorySeparatorChar + "Config";
-            configFileName = configDirPath+Path.DirectorySeparatorChar+ "conf"+typeof(T).Namespace +".json";
+            _configDirPath = Directory.GetParent(System.Reflection.Assembly.GetAssembly(typeof(T)).Location).FullName + Path.DirectorySeparatorChar + "Config";
+            _configFileName = _configDirPath+Path.DirectorySeparatorChar+ "conf"+typeof(T).Namespace +".json";
             CurrentConfig=SetupConfig();
         }
 
         private T SetupConfig()
         {
             T result = null;
-            if (!Directory.Exists(configDirPath)) Directory.CreateDirectory(configDirPath);
-            if (!File.Exists(configFileName))
+            if (!Directory.Exists(_configDirPath)) Directory.CreateDirectory(_configDirPath);
+            if (!File.Exists(_configFileName))
             {
                 try
                 {
                     T defaultConf = ((T)Activator.CreateInstance(typeof(T))).GetDefaultConfig();
                     string conf = JsonConvert.SerializeObject(defaultConf);
-                    File.WriteAllText(configFileName, conf);
+                    File.WriteAllText(_configFileName, conf);
                     result = defaultConf;
                 }
                 catch (Exception ex)
@@ -40,7 +40,7 @@ namespace ONIModsLibrary.Classes
             {
                 try
                 {
-                    string fileContents = File.ReadAllText(configFileName);
+                    string fileContents = File.ReadAllText(_configFileName);
                     result = JsonConvert.DeserializeObject<T>(fileContents);
                 }
                 catch (Exception ex)
@@ -52,10 +52,12 @@ namespace ONIModsLibrary.Classes
             return result;
         }
 
-        public static ONIModConfigManager<T> getInstance() 
+        public static ONIModConfigManager<T> Instance
         {
-            if (singleInstance == null) singleInstance = new ONIModConfigManager<T>();
-            return singleInstance;
+            get {
+                if (_singleInstance == null) _singleInstance = new ONIModConfigManager<T>();
+                return _singleInstance;
+            }
         }
     }
 

@@ -10,8 +10,8 @@ namespace QuantumCompressors
                 gasStorageCapacityKg = 9000f,
                 liquidStorageCapacityKg = 300000f,
                 storagePowerConsumption = 2000f,
-                portPowerConsumption = 10f,
-                filterPowerConsumption=20f
+                portPowerConsumption = 50f,
+                filterPowerConsumption=100f
             };
         }
 
@@ -20,7 +20,6 @@ namespace QuantumCompressors
         public float storagePowerConsumption { get; set; }
         public float portPowerConsumption { get; set; }
         public float filterPowerConsumption { get; set; }
-        public string testProp { get; set; }
 
     }
 }

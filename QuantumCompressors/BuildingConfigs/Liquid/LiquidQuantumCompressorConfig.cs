@@ -1,79 +1,71 @@
 ﻿using ONIModsLibrary.Classes;
-using QuantumCompressors.BuildingComponents;
+using QuantumCompressors.Classes;
 using STRINGS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TUNING;
 using UnityEngine;
 
 namespace QuantumCompressors.BuildingConfigs.Liquid
 {
-    public class LiquidQuantumCompressorConfig:IBuildingConfig
+    public class LiquidQuantumCompressorConfig : IBuildingConfig
     {
-
-		public static string UPPERID { get { return ID.ToUpperInvariant(); } }
-		public const string ID = "LiquidQuantumCompressor";
-		public const string NAME = "Liquid Quantum Compressor";
-		public static string DESC = "Uses quantum compression to store large amounts of " + UI.FormatAsLink("liquids", "ELEMENTS_LIQUID") + ", and with quantum entanglement, storage management becomes a breeze.";
-		public static string PORT_ID = "LiquidQuantumCompressorLogicPort";
-		private const ConduitType conduitType = ConduitType.Liquid;
-		//private ConduitPortInfo outputPort = new ConduitPortInfo(conduitType, new CellOffset(0,0));
-		//private ConduitPortInfo inputPort = new ConduitPortInfo(conduitType, new CellOffset(1,2));
-		private Storage storage;
-		private ONIModConfigManager<QCModConfig> modConf = ONIModConfigManager<QCModConfig>.getInstance();
-		public override BuildingDef CreateBuildingDef()
-		{
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f, QCProperties.CompressorCost, QCProperties.CompressorMats, 1000f, BuildLocationRule.OnFloor, TUNING.BUILDINGS.DECOR.PENALTY.TIER1, NOISE_POLLUTION.NOISY.TIER0, 0.2f);
+        public static string UPPERID { get { return ID.ToUpperInvariant(); } }
+        public const string ID = "LiquidQuantumCompressor";
+        public const string NAME = "Liquid Quantum Compressor";
+        public static string DESC = "Uses quantum compression to store large amounts of " + UI.FormatAsLink("liquids", "ELEMENTS_LIQUID") + ", and with quantum entanglement, storage management becomes a breeze.";
+        private const ConduitType conduitType = ConduitType.Liquid;
+        public override BuildingDef CreateBuildingDef()
+        {
+            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f,
+                QCProperties.CompressorCost,
+                QCProperties.CompressorMaterials,
+                800f, BuildLocationRule.OnFloor,
+                TUNING.BUILDINGS.DECOR.PENALTY.TIER1,
+                TUNING.NOISE_POLLUTION.NOISY.TIER0);
+            buildingDef.RequiresPowerInput = true;
+            buildingDef.EnergyConsumptionWhenActive = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig.storagePowerConsumption;
+            buildingDef.PowerInputOffset = new CellOffset(0, 0);
+            buildingDef.OnePerWorld = true;
             buildingDef.Floodable = false;
-			buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
-			buildingDef.AudioCategory = "HollowMetal";
-			buildingDef.RequiresPowerInput = true;
-			buildingDef.EnergyConsumptionWhenActive = modConf.CurrentConfig.storagePowerConsumption;
-			buildingDef.PowerInputOffset = new CellOffset(1, 0);
-			buildingDef.UtilityInputOffset = new CellOffset(0, 0);
-			buildingDef.UtilityOutputOffset = new CellOffset(0, 2);
-			List<LogicPorts.Port> lPortList = new List<LogicPorts.Port>();
-			lPortList.Add(LogicPorts.Port.OutputPort(PORT_ID, new CellOffset(0, 2), STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE, false, false));
-			buildingDef.LogicOutputPorts = lPortList;
-			GeneratedBuildings.RegisterWithOverlay(OverlayScreen.LiquidVentIDs, ID);
-			return buildingDef;
-		}
-		public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
-		{
-			go.AddOrGet<Reservoir>();
-			Storage storage = BuildingTemplates.CreateDefaultStorage(go, false);
-			storage.showDescriptor = true;
-			storage.allowItemRemoval = false;
-			storage.storageFilters = STORAGEFILTERS.LIQUIDS;
-			storage.capacityKg = modConf.CurrentConfig.liquidStorageCapacityKg;
-			storage.SetDefaultStoredItemModifiers(GasReservoirConfig.ReservoirStoredItemModifiers);
-			this.storage = storage;
-			go.AddOrGet<SmartReservoir>();
-			var qs = go.AddComponent<QuantumStorage>();
-			qs.conduitType = ConduitType.Liquid ;
-		}
+            buildingDef.AudioCategory = "HollowMetal";
+            buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 1));
+            buildingDef.LogicOutputPorts = new List<LogicPorts.Port>()
+            {
+                LogicPorts.Port.OutputPort( SmartReservoir.PORT_ID,
+                new CellOffset(0, 0), 
+                STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT,
+                STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_ACTIVE, 
+                STRINGS.BUILDINGS.PREFABS.SMARTRESERVOIR.LOGIC_PORT_INACTIVE)
+            };
+            return buildingDef;
+        }
 
-		public override void DoPostConfigureUnderConstruction(GameObject go)
-		{
-			var quc = go.AddComponent<QuantumStorageTracker>();
-			quc.conduitType = conduitType;
-		}
-		
-		public override void DoPostConfigureComplete(GameObject go)
-		{
+        public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+        {
+            var kprefab = go.GetComponent<KPrefabID>();
+            kprefab.AddTag(GameTags.UniquePerWorld);
+            kprefab.AddTag(GameTags.NotRocketInteriorBuilding);
+            go.AddOrGet<Reservoir>();
+            Storage defaultStorage = BuildingTemplates.CreateDefaultStorage(go);
+            defaultStorage.showDescriptor = true;
+            defaultStorage.allowItemRemoval = false;
+            defaultStorage.storageFilters = STORAGEFILTERS.LIQUIDS;
+            defaultStorage.capacityKg = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig.liquidStorageCapacityKg;
+            defaultStorage.SetDefaultStoredItemModifiers(GasReservoirConfig.ReservoirStoredItemModifiers);
+            defaultStorage.showCapacityStatusItem = true;
+            defaultStorage.showCapacityAsMainStatus = true;
+            go.AddOrGet<SmartReservoir>();
+            var qcomp = go.AddOrGet<QuantumCompressorComponent>();
+            qcomp.conduitType = conduitType;
+        }
 
-			var quc = go.AddComponent<QuantumStorageTracker>();
-			quc.conduitType = conduitType;
-			//var qs = go.AddOrGet<QuantumGasStorage>();
-			//qs.BuildingDefId = ID;
-			go.AddOrGetDef<StorageController.Def>();
-			RequireInputs component = go.GetComponent<RequireInputs>();
-			component.SetRequirements(true, false);
-			go.GetComponent<KPrefabID>().AddTag(GameTags.OverlayBehindConduits, false);
-		}
-
-
+        public override void DoPostConfigureComplete(GameObject go)
+        {
+            go.AddOrGetDef<StorageController.Def>();
+        }
     }
 }
