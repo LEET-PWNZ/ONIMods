@@ -19,10 +19,11 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
         private ConduitPortInfo inputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
         public override BuildingDef CreateBuildingDef()
 		{
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID,
+            var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
+            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID,
                 1, 2, "valveliquid_logic_kanim", 30, 10f,
-                QCProperties.IntakeCost,
-                QCProperties.IntakeMaterials,
+                currentConfig.intakeCost,
+                currentConfig.intakeMaterials,
                 1600f, BuildLocationRule.Anywhere,
                 TUNING.BUILDINGS.DECOR.PENALTY.TIER0,
                 TUNING.NOISE_POLLUTION.NOISY.TIER1);
@@ -30,7 +31,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
             buildingDef.InputConduitType = inputPort.conduitType;
 			buildingDef.Floodable = false;
 			buildingDef.RequiresPowerInput = true;
-			buildingDef.EnergyConsumptionWhenActive = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig.portPowerConsumption;
+			buildingDef.EnergyConsumptionWhenActive = currentConfig.portPowerConsumption;
 			buildingDef.PowerInputOffset = new CellOffset(0, 1);
             buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
             buildingDef.AudioCategory = "Metal";

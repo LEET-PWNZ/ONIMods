@@ -20,14 +20,15 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
         private const ConduitType conduitType = ConduitType.Liquid;
         public override BuildingDef CreateBuildingDef()
         {
+            var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
             BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f,
-                QCProperties.CompressorCost,
-                QCProperties.CompressorMaterials,
+                currentConfig.compressorCost,
+                currentConfig.compressorMaterials,
                 800f, BuildLocationRule.OnFloor,
                 TUNING.BUILDINGS.DECOR.PENALTY.TIER1,
                 TUNING.NOISE_POLLUTION.NOISY.TIER0);
             buildingDef.RequiresPowerInput = true;
-            buildingDef.EnergyConsumptionWhenActive = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig.storagePowerConsumption;
+            buildingDef.EnergyConsumptionWhenActive = currentConfig.storagePowerConsumption;
             buildingDef.PowerInputOffset = new CellOffset(0, 0);
             buildingDef.OnePerWorld = true;
             buildingDef.Floodable = false;

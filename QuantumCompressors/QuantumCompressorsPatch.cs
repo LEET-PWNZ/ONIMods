@@ -59,46 +59,5 @@ namespace QuantumCompressors
         }
     }
 
-    [HarmonyPatch(typeof(BaseUtilityBuildTool), "CheckForConnection")]
-    internal class QuantumElementFilterOverrides
-    {
-
-        static void Postfix(ref bool __result, int cell, string defName, string soundName, ref BuildingCellVisualizer outBcv, bool fireEvents = true)
-        {
-            if (!__result)
-            {
-                outBcv = null;
-                Building building = Grid.Objects[cell, 1]?.GetComponent<Building>();
-                if (building == null)
-                {
-                    __result = false;
-                    return;
-                }
-                var compressorComponent = building.GetComponent<QuantumOperationalOutlet>();
-                if ((defName.Contains("Liquid") || defName.Contains("Gas")) && compressorComponent != null)
-                {
-                    var filterCell = compressorComponent.GetFilteredCell();
-                    if (cell == filterCell)
-                    {
-                        outBcv = building.gameObject.GetComponent<BuildingCellVisualizer>();
-                        if(outBcv!=null)
-                        {
-                            if (fireEvents)
-                            {
-                                outBcv.ConnectedEvent(cell);
-                                string sound = GlobalAssets.GetSound(soundName, false);
-                                if (sound != null)
-                                {
-                                    KMonoBehaviour.PlaySound(sound);
-                                }
-                            }
-                            __result = true;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 

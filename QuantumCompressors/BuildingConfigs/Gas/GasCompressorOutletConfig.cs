@@ -20,16 +20,16 @@ namespace QuantumCompressors.BuildingConfigs.Gas
 
 		public override BuildingDef CreateBuildingDef()
 		{
-
+			var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valvegas_logic_kanim", 30, 10f,
-				QCProperties.OutletCost,
-				QCProperties.OutletMaterials,
+				currentConfig.outletCost,
+				currentConfig.outletMaterials,
 				1600f, BuildLocationRule.Anywhere,
 				TUNING.BUILDINGS.DECOR.PENALTY.TIER0,
 				TUNING.NOISE_POLLUTION.NOISY.TIER1);
 			buildingDef.Floodable = false;
 			buildingDef.RequiresPowerInput = true;
-			buildingDef.EnergyConsumptionWhenActive = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig.filterPowerConsumption;
+			buildingDef.EnergyConsumptionWhenActive = currentConfig.filterPowerConsumption;
 			buildingDef.PowerInputOffset = new CellOffset(0, 1);
 			buildingDef.ViewMode = OverlayModes.GasConduits.ID;
 			buildingDef.AudioCategory = "Metal";

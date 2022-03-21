@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace ONIModsLibrary.Classes
 {
@@ -21,14 +23,13 @@ namespace ONIModsLibrary.Classes
         private T SetupConfig()
         {
             T result = null;
+            T defaultConf = ((T)Activator.CreateInstance(typeof(T))).GetDefaultConfig();
             if (!Directory.Exists(_configDirPath)) Directory.CreateDirectory(_configDirPath);
             if (!File.Exists(_configFileName))
             {
                 try
                 {
-                    T defaultConf = ((T)Activator.CreateInstance(typeof(T))).GetDefaultConfig();
-                    string conf = JsonConvert.SerializeObject(defaultConf);
-                    File.WriteAllText(_configFileName, conf);
+                    SaveFile(defaultConf);
                     result = defaultConf;
                 }
                 catch (Exception ex)
@@ -41,7 +42,8 @@ namespace ONIModsLibrary.Classes
                 try
                 {
                     string fileContents = File.ReadAllText(_configFileName);
-                    result = JsonConvert.DeserializeObject<T>(fileContents);
+                    var readConfig = JsonConvert.DeserializeObject<T>(fileContents);
+                    result = MergeCurrentWithDefault(readConfig, defaultConf);
                 }
                 catch (Exception ex)
                 {
@@ -50,6 +52,33 @@ namespace ONIModsLibrary.Classes
             }
             
             return result;
+        }
+
+        private T MergeCurrentWithDefault(T currentConfig,T defaultConfig)
+        {
+            T newConfig = currentConfig;
+            bool mustSave = false;
+            foreach (var prop in currentConfig.GetType().GetProperties())
+            {
+                var currentPropVal = prop.GetValue(currentConfig);
+                var defaultPropVal= prop.GetValue(defaultConfig);
+                if (currentPropVal == null || string.IsNullOrEmpty(currentPropVal.ToString()))
+                {
+                    prop.SetValue(newConfig, defaultPropVal);
+                    if(!mustSave) mustSave = true;
+                }
+            }
+            if (mustSave)
+            {
+                SaveFile(newConfig);
+            }
+            return newConfig;
+        }
+
+        private void SaveFile(T objToSave)
+        {
+            string conf = JsonConvert.SerializeObject(objToSave);
+            File.WriteAllText(_configFileName, conf);
         }
 
         public static ONIModConfigManager<T> Instance
