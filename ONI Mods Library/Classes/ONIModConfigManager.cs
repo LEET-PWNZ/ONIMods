@@ -15,9 +15,10 @@ namespace ONIModsLibrary.Classes
         public readonly T CurrentConfig;
         private ONIModConfigManager()
         {
-            _configDirPath = Directory.GetParent(System.Reflection.Assembly.GetAssembly(typeof(T)).Location).FullName + Path.DirectorySeparatorChar + "Config";
-            _configFileName = _configDirPath+Path.DirectorySeparatorChar+ "conf"+typeof(T).Namespace +".json";
-            CurrentConfig=SetupConfig();
+            _configDirPath = Directory.GetParent(Assembly.GetAssembly(typeof(T)).Location)
+                .FullName + Path.DirectorySeparatorChar + "Config";
+            _configFileName = _configDirPath+Path.DirectorySeparatorChar+ "conf" + typeof(T).Namespace + ".json";
+            CurrentConfig = SetupConfig();
         }
 
         private T SetupConfig()
@@ -54,14 +55,14 @@ namespace ONIModsLibrary.Classes
             return result;
         }
 
-        private T MergeCurrentWithDefault(T currentConfig,T defaultConfig)
+        private T MergeCurrentWithDefault(T currentConfig, T defaultConfig)
         {
             T newConfig = currentConfig;
             bool mustSave = false;
             foreach (var prop in currentConfig.GetType().GetProperties())
             {
                 var currentPropVal = prop.GetValue(currentConfig);
-                var defaultPropVal= prop.GetValue(defaultConfig);
+                var defaultPropVal = prop.GetValue(defaultConfig);
                 if (currentPropVal == null || string.IsNullOrEmpty(currentPropVal.ToString()))
                 {
                     prop.SetValue(newConfig, defaultPropVal);
