@@ -21,7 +21,7 @@ namespace QuantumCompressors.BuildingConfigs.Gas
 
 		public override BuildingDef CreateBuildingDef()
         {
-			var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
+            QCModConfig currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
 			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 1, 2, "valvegas_logic_kanim", 30, 10f,
 				currentConfig.intakeCost,
 				currentConfig.intakeMaterials,

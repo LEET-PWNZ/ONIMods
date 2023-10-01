@@ -19,7 +19,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
         private ConduitPortInfo secondaryPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 1));
         public override BuildingDef CreateBuildingDef()
         {
-            var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
+            QCModConfig currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
             BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID,
                 1, 2, "valveliquid_logic_kanim", 30, 10f,
                 currentConfig.outletCost,

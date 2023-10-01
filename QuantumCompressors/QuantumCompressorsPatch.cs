@@ -30,7 +30,7 @@ namespace QuantumCompressors
     {
         private static void Postfix()
         {
-            var db = Db.Get();
+            Db db = Db.Get();
             if (db != null)
             {
                 ONIModFunctions.AddStructureTech(db, "HVAC", GasQuantumCompressorConfig.ID);

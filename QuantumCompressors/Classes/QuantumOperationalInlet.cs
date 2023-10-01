@@ -18,9 +18,8 @@ namespace QuantumCompressors.Classes
         private Operational _operational;
         private static readonly EventSystem.IntraObjectHandler<QuantumOperationalInlet> OnOperationalChangedDelegate = new EventSystem.IntraObjectHandler<QuantumOperationalInlet>(((component, mustOperare) => component.OnOperationalChanged((bool)mustOperare)));
         private bool _isDispensing;
-        [SerializeField]
         public ConduitType conduitType;
-        [Serialize]
+        [SerializeField]
         private float _currentFlow;
         [MyCmpGet]
         protected KBatchedAnimController controller;
@@ -29,16 +28,14 @@ namespace QuantumCompressors.Classes
         [MyCmpReq]
         public Building building;
         [SerializeField]
-        private QuantumCompressorComponent _compressor;
+        private List<QuantumCompressorComponent> _compressors = new List<QuantumCompressorComponent>();
         [SerializeField]
-        private Storage _compressorStorage;
-        [SerializeField]
-        private Operational _compressorOperational;
+        private List<Storage> _compressorStorages = new List<Storage>();
         private QuantumStorageManager _quantumStorageManager = QuantumStorageManager.Instance;
         private void OnOperationalChanged(bool mustOperate)
         {
             if (mustOperate)
-                _currentFlow = conduitType==ConduitType.Liquid ? 10f : 1f;
+                _currentFlow = conduitType == ConduitType.Liquid ? 10f : 1f;
             else
                 _currentFlow = 0f;
             _operational.SetActive(mustOperate);
@@ -63,35 +60,28 @@ namespace QuantumCompressors.Classes
             OnCmpEnable();
         }
 
-        private bool HasOperationalStorage()
+        private void UpdateCompressors()
         {
-            bool result = false;
-            if (_compressor != null)
-            {
-                result = _compressorOperational.IsOperational;
-            }
-            return result;
+            _compressors = _quantumStorageManager.ActiveStorages
+                .FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId() 
+                && s.conduitType == conduitType 
+                && s.GetComponent<Operational>().IsOperational)
+                .ToList();
+            _compressorStorages = _compressors.Select(c => c.GetComponent<Storage>()).ToList();
         }
 
-        private void ensureCompressorExists()
+        private float RemainingStorageCapacity()
         {
-            if (_compressor == null)
-            {
-                var compressorContextList = _quantumStorageManager.ActiveStorages.FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId() && s.conduitType == conduitType).ToList();
-                if (compressorContextList.Count > 0)
-                {
-                    _compressor = compressorContextList.First();
-                    _compressorOperational = _compressor.GetComponent<Operational>();
-                    _compressorStorage = _compressor.GetComponent<Storage>();
-                }
-            }
+            float result = 0;
+            result = _compressorStorages.Sum(s => s.RemainingCapacity());
+            return result;
         }
 
         private void ConduitUpdate(float dt)
         {
-            ensureCompressorExists();
+            UpdateCompressors();
             ConduitFlow flowManager = Conduit.GetFlowManager(conduitType);
-            if (!flowManager.HasConduit(_inputCell) || !HasOperationalStorage())
+            if (!flowManager.HasConduit(_inputCell) || !_compressors.Any())
             {
                 OnMassTransfer(0.0f);
                 UpdateAnim();
@@ -101,19 +91,11 @@ namespace QuantumCompressors.Classes
                 ConduitFlow.Conduit conduit = flowManager.GetConduit(_inputCell);
                 ConduitFlow.ConduitContents contents = conduit.GetContents(flowManager);
                 float transferInMass = Mathf.Min(contents.mass, _currentFlow * dt);
-                float transferOutMass = Mathf.Min(transferInMass, _compressorStorage.RemainingCapacity());
+                float transferOutMass = Mathf.Min(transferInMass, RemainingStorageCapacity());
                 if (transferOutMass > 0f)
                 {
                     int disease_count = (int)(contents.diseaseCount * (transferOutMass / contents.mass));
-                    switch (conduitType)
-                    {
-                        case ConduitType.Gas:
-                            _compressorStorage.AddGasChunk(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, false);
-                            break;
-                        case ConduitType.Liquid:
-                            _compressorStorage.AddLiquid(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, false);
-                            break;
-                    }
+                    TransferElement(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, false);
                     Game.Instance.accumulators.Accumulate(flowAccumulator, transferOutMass);
                     flowManager.RemoveElement(_inputCell, transferOutMass);
                 }
@@ -121,6 +103,33 @@ namespace QuantumCompressors.Classes
                 UpdateAnim();
             }
         }
+
+        void TransferElement(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, bool do_disease_transfer = true)
+        {
+            foreach (Storage storage in _compressorStorages)
+            {
+                float remainingCap = storage.RemainingCapacity();
+                float transferrableMass = Mathf.Min(mass, remainingCap);
+                int transferrableDiseases = mass - transferrableMass == 0 ? disease_count : disease_count * Convert.ToInt32(transferrableMass / mass);
+                switch (conduitType)
+                {
+                    case ConduitType.Gas:
+                        storage.AddGasChunk(element, transferrableMass, temperature, disease_idx, transferrableDiseases, keep_zero_mass, do_disease_transfer);
+                        break;
+                    case ConduitType.Liquid:
+                        storage.AddLiquid(element, transferrableMass, temperature, disease_idx, transferrableDiseases, keep_zero_mass, do_disease_transfer);
+                        break;
+                }
+                
+                mass -= transferrableMass;
+                disease_count -= transferrableDiseases;
+                if(mass == 0)
+                {
+                    break;
+                }
+            }
+        }
+
         protected override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);

@@ -7,17 +7,17 @@ namespace QuantumCompressors
         public override QCModConfig GetDefaultConfig()
         {
             return new QCModConfig {
-                gasStorageCapacityKg = 9000f,
-                liquidStorageCapacityKg = 100000f, //Game base storage is limited to 100 ton, hoping to find a way around this in a future version
-                storagePowerConsumption = 960f,
-                portPowerConsumption = 30f,
-                filterPowerConsumption=60f,
-                intakeCost =new float[] { 50f, 25f },
-                intakeMaterials=new string[] { "RefinedMetal", "Polypropylene" },
-                outletCost =new float[] { 100f, 50f },
-                outletMaterials=new string[] { "RefinedMetal", "Polypropylene"},
-                compressorCost=new float[] { 800f,400f, 400f },
-                compressorMaterials= new string[] { "RefinedMetal", "Polypropylene", "Transparent" }
+                gasStorageCapacityKg = 3000f,
+                liquidStorageCapacityKg = 100000f,
+                storagePowerConsumption = 240f,
+                portPowerConsumption = 10f,
+                filterPowerConsumption = 15f,
+                intakeCost = new float[] { 20f, 20f },
+                intakeMaterials = new string[] { "RefinedMetal", "Polypropylene" },
+                outletCost = new float[] { 30f, 30f },
+                outletMaterials = new string[] { "RefinedMetal", "Polypropylene"},
+                compressorCost = new float[] { 200f, 50f, 50f },
+                compressorMaterials = new string[] { "RefinedMetal", "Polypropylene", "Transparent" }
             };
         }
 

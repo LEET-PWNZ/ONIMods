@@ -20,7 +20,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
         private const ConduitType conduitType = ConduitType.Liquid;
         public override BuildingDef CreateBuildingDef()
         {
-            var currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
+            QCModConfig currentConfig = ONIModConfigManager<QCModConfig>.Instance.CurrentConfig;
             BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(ID, 2, 3, "liquidreservoir_kanim", 100, 120f,
                 currentConfig.compressorCost,
                 currentConfig.compressorMaterials,
@@ -30,7 +30,6 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
             buildingDef.RequiresPowerInput = true;
             buildingDef.EnergyConsumptionWhenActive = currentConfig.storagePowerConsumption;
             buildingDef.PowerInputOffset = new CellOffset(0, 0);
-            buildingDef.OnePerWorld = true;
             buildingDef.Floodable = false;
             buildingDef.AudioCategory = "HollowMetal";
             buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 1));
@@ -47,8 +46,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            var kprefab = go.GetComponent<KPrefabID>();
-            kprefab.AddTag(GameTags.UniquePerWorld);
+            KPrefabID kprefab = go.GetComponent<KPrefabID>();
             kprefab.AddTag(GameTags.NotRocketInteriorBuilding);
             go.AddOrGet<Reservoir>();
             Storage defaultStorage = BuildingTemplates.CreateDefaultStorage(go);
@@ -60,7 +58,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
             defaultStorage.showCapacityStatusItem = true;
             defaultStorage.showCapacityAsMainStatus = true;
             go.AddOrGet<SmartReservoir>();
-            var qcomp = go.AddOrGet<QuantumCompressorComponent>();
+            QuantumCompressorComponent qcomp = go.AddOrGet<QuantumCompressorComponent>();
             qcomp.conduitType = conduitType;
         }
 

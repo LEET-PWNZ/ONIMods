@@ -12,9 +12,8 @@ namespace QuantumCompressors.Classes
 
     [SerializationConfig(MemberSerialization.OptIn)]
     [AddComponentMenu("KMonoBehaviour/scripts/" + nameof(QuantumCompressorComponent))]
-    public class QuantumCompressorComponent : KMonoBehaviour,ISaveLoadable
+    public class QuantumCompressorComponent : KMonoBehaviour, ISaveLoadable
     {
-        [SerializeField]
         public ConduitType conduitType;
         [MyCmpReq]
         private Operational _operational;

@@ -37,11 +37,9 @@ namespace QuantumCompressors.Classes
         [MyCmpReq]
         public Building building;
         [SerializeField]
-        private QuantumCompressorComponent _compressor;
+        private List<QuantumCompressorComponent> _compressors = new List<QuantumCompressorComponent>();
         [SerializeField]
-        private Storage _compressorStorage;
-        [SerializeField]
-        private Operational _compressorOperational;
+        private List<Storage> _compressorStorages = new List<Storage>();
         private QuantumStorageManager _quantumStorageManager = QuantumStorageManager.Instance;
         private void OnOperationalChanged(bool mustOperate)=> _operational.SetActive(mustOperate);
 
@@ -84,43 +82,30 @@ namespace QuantumCompressors.Classes
             OnCmpEnable();
         }
 
-        private bool HasOperationalStorage()
+        private void UpdateCompressors()
         {
-            bool result = false;
-            if (_compressor != null)
-            {
-                result = _compressorOperational.IsOperational;
-            }
-            return result;
-        }
-
-        private void ensureCompressorExists()
-        {
-            if (_compressor == null)
-            {
-                var compressorContextList = _quantumStorageManager.ActiveStorages.FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId() && s.conduitType == portInfo.conduitType).ToList();
-                if (compressorContextList.Count > 0)
-                {
-                    _compressor = compressorContextList.First();
-                    _compressorOperational = _compressor.GetComponent<Operational>();
-                    _compressorStorage = _compressor.GetComponent<Storage>();
-                }
-            }
+            _compressors = _quantumStorageManager.ActiveStorages
+                .FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId()
+                && s.conduitType == portInfo.conduitType
+                && s.GetComponent<Operational>().IsOperational)
+                .ToList();
+            _compressorStorages = _compressors.Select(c => c.GetComponent<Storage>()).ToList();
         }
 
         private void ConduitUpdate(float dt)
         {
-            ensureCompressorExists();
+            UpdateCompressors();
             UpdateConduitBlockedStatus();
             ConduitFlow flowManager = Conduit.GetFlowManager(portInfo.conduitType);
-            if (!flowManager.HasConduit(_filteredCell) || !HasOperationalStorage() || !_operational.IsOperational)
+            if (!flowManager.HasConduit(_filteredCell) || !_compressors.Any() || !_operational.IsOperational)
             {
                 OnMassTransfer(0.0f);
                 UpdateAnim();
             }
             else
             {
-                var transferElement = FindSuitableElement();
+                Storage usedStorage = null;
+                PrimaryElement transferElement = FindSuitableElement(out usedStorage);
                 float transferMass = 0f;
                 if (transferElement != null)
                 {
@@ -134,7 +119,7 @@ namespace QuantumCompressors.Classes
                             transferElement.ModifyDiseaseCount(-disease_count, "QuantumOperationalOutlet.ConduitUpdate");
                             transferElement.Mass -= transferMass;
                             Game.Instance.accumulators.Accumulate(flowAccumulator, transferMass);
-                            _compressorStorage.Trigger((int)GameHashes.OnStorageChange, transferElement.gameObject);
+                            usedStorage?.Trigger((int)GameHashes.OnStorageChange, transferElement.gameObject);
                         }
                     }
                 }
@@ -143,20 +128,25 @@ namespace QuantumCompressors.Classes
             }
         }
         private int _elementOutputOffset = 0;
-        private PrimaryElement FindSuitableElement()
+        private PrimaryElement FindSuitableElement(out Storage usedStorage)
         {
-            var availableItems = _compressorStorage.items.Where(i => i.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
-            var filteredCount = availableItems.Count;
-            for (int i = 0; i < filteredCount; i++)
+            foreach (Storage storage in _compressorStorages)
             {
-                int elemIndex = (i + _elementOutputOffset) % filteredCount;
-                PrimaryElement component = availableItems[elemIndex].GetComponent<PrimaryElement>();
-                if (component != null && component.Mass > 0f)
+                List<GameObject> availableItems = storage.items.Where(i => i.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
+                int filteredCount = availableItems.Count;
+                for (int i = 0; i < filteredCount; i++)
                 {
-                    _elementOutputOffset = (_elementOutputOffset + 1) % filteredCount;
-                    return component;
+                    int elemIndex = (i + _elementOutputOffset) % filteredCount;
+                    PrimaryElement component = availableItems[elemIndex].GetComponent<PrimaryElement>();
+                    if (component != null && component.Mass > 0f)
+                    {
+                        _elementOutputOffset = (_elementOutputOffset + 1) % filteredCount;
+                        usedStorage = storage;
+                        return component;
+                    }
                 }
             }
+            usedStorage = null;
             return null;
         }
 
@@ -174,7 +164,7 @@ namespace QuantumCompressors.Classes
         {
             bool outputConnected = RequireOutputs.IsConnected(_filteredCell, portInfo.conduitType);
             StatusItem status_item = portInfo.conduitType == ConduitType.Gas ? Db.Get().BuildingStatusItems.NeedGasOut : Db.Get().BuildingStatusItems.NeedLiquidOut;
-            var needItemNotEmpty = _needsConduitStatusItemGuid != Guid.Empty;
+            bool needItemNotEmpty = _needsConduitStatusItemGuid != Guid.Empty;
             if (outputConnected != needItemNotEmpty)
                 return;
             _needsConduitStatusItemGuid = _selectable.ToggleStatusItem(status_item, _needsConduitStatusItemGuid, !outputConnected);
