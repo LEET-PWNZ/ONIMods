@@ -1,7 +1,7 @@
 supportedContent: ALL
 minimumSupportedBuild: 484114
 APIVersion: 2
-version: "1.8"
+version: "1.9"
 staticID: ONIQuantumCompressors
 description: Quantum Compressors
 title: Quantum Compressors

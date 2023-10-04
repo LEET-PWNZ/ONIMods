@@ -53,7 +53,7 @@ namespace QuantumCompressors
         {
             if (!__result)
             {
-                __result = !__instance.isLogicFilter && target.GetComponent<QuantumOperationalOutlet>() != null && target.GetComponent<Filterable>() != null;
+                __result = !__instance.isLogicFilter && (target.GetComponent<QuantumOperationalOutlet>() != null || target.GetComponent<QuantumCompressorComponent>() != null) && target.GetComponent<Filterable>() != null;
                 return;
             }
         }

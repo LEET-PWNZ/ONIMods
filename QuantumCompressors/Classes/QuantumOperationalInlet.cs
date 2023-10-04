@@ -29,8 +29,6 @@ namespace QuantumCompressors.Classes
         public Building building;
         [SerializeField]
         private List<QuantumCompressorComponent> _compressors = new List<QuantumCompressorComponent>();
-        [SerializeField]
-        private List<Storage> _compressorStorages = new List<Storage>();
         private QuantumStorageManager _quantumStorageManager = QuantumStorageManager.Instance;
         private void OnOperationalChanged(bool mustOperate)
         {
@@ -67,13 +65,12 @@ namespace QuantumCompressors.Classes
                 && s.conduitType == conduitType 
                 && s.GetComponent<Operational>().IsOperational)
                 .ToList();
-            _compressorStorages = _compressors.Select(c => c.GetComponent<Storage>()).ToList();
         }
 
-        private float RemainingStorageCapacity()
+        private float RemainingStorageCapacity(List<Storage> usableStorages)
         {
             float result = 0;
-            result = _compressorStorages.Sum(s => s.RemainingCapacity());
+            result = usableStorages.Sum(s => s.RemainingCapacity());
             return result;
         }
 
@@ -90,12 +87,22 @@ namespace QuantumCompressors.Classes
             {
                 ConduitFlow.Conduit conduit = flowManager.GetConduit(_inputCell);
                 ConduitFlow.ConduitContents contents = conduit.GetContents(flowManager);
+
+                List<Storage> usableStorageListOrdered = _compressors
+                .Where(c => c.GetSelectedTag == contents.element.CreateTag())
+                .Select(c => c.GetComponent<Storage>())
+                .Union(_compressors
+                .Where(c => c.GetSelectedTag.Name.Equals("void", StringComparison.InvariantCultureIgnoreCase))
+                .Select(c => c.GetComponent<Storage>()))
+                .ToList();
+
                 float transferInMass = Mathf.Min(contents.mass, _currentFlow * dt);
-                float transferOutMass = Mathf.Min(transferInMass, RemainingStorageCapacity());
+                float transferOutMass = Mathf.Min(transferInMass, RemainingStorageCapacity(usableStorageListOrdered));
                 if (transferOutMass > 0f)
                 {
+                    
                     int disease_count = (int)(contents.diseaseCount * (transferOutMass / contents.mass));
-                    TransferElement(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, false);
+                    TransferElement(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, usableStorageListOrdered, false);
                     Game.Instance.accumulators.Accumulate(flowAccumulator, transferOutMass);
                     flowManager.RemoveElement(_inputCell, transferOutMass);
                 }
@@ -104,9 +111,10 @@ namespace QuantumCompressors.Classes
             }
         }
 
-        void TransferElement(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, bool do_disease_transfer = true)
+        void TransferElement(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, List<Storage> usableStorages, bool do_disease_transfer = true)
         {
-            foreach (Storage storage in _compressorStorages)
+            
+            foreach (Storage storage in usableStorages)
             {
                 float remainingCap = storage.RemainingCapacity();
                 float transferrableMass = Mathf.Min(mass, remainingCap);

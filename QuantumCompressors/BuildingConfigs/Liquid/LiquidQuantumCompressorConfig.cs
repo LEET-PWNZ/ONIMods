@@ -60,6 +60,7 @@ namespace QuantumCompressors.BuildingConfigs.Liquid
             go.AddOrGet<SmartReservoir>();
             QuantumCompressorComponent qcomp = go.AddOrGet<QuantumCompressorComponent>();
             qcomp.conduitType = conduitType;
+            go.AddOrGet<Filterable>().filterElementState = Filterable.ElementState.Liquid;
         }
 
         public override void DoPostConfigureComplete(GameObject go)
