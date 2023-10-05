@@ -96,6 +96,7 @@ namespace QuantumCompressors.Classes
         {
             UpdateCompressors();
             UpdateConduitBlockedStatus();
+            bool activeFlag = false;
             ConduitFlow flowManager = Conduit.GetFlowManager(portInfo.conduitType);
             if (!flowManager.HasConduit(_filteredCell) || !_compressors.Any() || !_operational.IsOperational)
             {
@@ -115,6 +116,7 @@ namespace QuantumCompressors.Classes
                         transferMass = flowManager.AddElement(_filteredCell, transferElement.ElementID, transferElement.Mass, transferElement.Temperature, transferElement.DiseaseIdx, transferElement.DiseaseCount);
                         if (transferMass > 0f)
                         {
+                            activeFlag = true;
                             int disease_count = (int)(transferElement.DiseaseCount * (transferMass / transferElement.Mass));
                             transferElement.ModifyDiseaseCount(-disease_count, "QuantumOperationalOutlet.ConduitUpdate");
                             transferElement.Mass -= transferMass;
@@ -126,6 +128,7 @@ namespace QuantumCompressors.Classes
                 OnMassTransfer(transferMass);
                 UpdateAnim();
             }
+            _operational.SetActive(activeFlag);
         }
         private int _elementOutputOffset = 0;
         private PrimaryElement FindSuitableElement(out Storage usedStorage)

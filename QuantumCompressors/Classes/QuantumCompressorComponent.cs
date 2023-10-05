@@ -26,12 +26,32 @@ namespace QuantumCompressors.Classes
         private KSelectable _selectable;
         private void OnFilterChanged(Tag tag) => _selectable.ToggleStatusItem(Db.Get().BuildingStatusItems.NoFilterElementSelected, !tag.IsValid || tag == GameTags.Void);
         private static StatusItem _filterStatusItem;
+        [MyCmpReq]
+        private Storage _storage;
 
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
             InitializeStatusItems();
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+        }
+
+        public float RemainingCapacity()
+        {
+            return _storage.RemainingCapacity();
+        }
+
+        public void AddElementChunk(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, bool do_disease_transfer = true)
+        {
+            switch (conduitType)
+            {
+                case ConduitType.Gas:
+                    _storage.AddGasChunk(element, mass, temperature, disease_idx, disease_count, keep_zero_mass, do_disease_transfer);
+                    break;
+                case ConduitType.Liquid:
+                    _storage.AddLiquid(element, mass, temperature, disease_idx, disease_count, keep_zero_mass, do_disease_transfer);
+                    break;
+            }
         }
 
         protected override void OnSpawn()

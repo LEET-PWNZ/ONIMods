@@ -67,10 +67,10 @@ namespace QuantumCompressors.Classes
                 .ToList();
         }
 
-        private float RemainingStorageCapacity(List<Storage> usableStorages)
+        private float RemainingStorageCapacity(List<QuantumCompressorComponent> usableCompressors)
         {
             float result = 0;
-            result = usableStorages.Sum(s => s.RemainingCapacity());
+            result = usableCompressors.Sum(s => s.RemainingCapacity());
             return result;
         }
 
@@ -78,6 +78,7 @@ namespace QuantumCompressors.Classes
         {
             UpdateCompressors();
             ConduitFlow flowManager = Conduit.GetFlowManager(conduitType);
+            bool activeFlag = false;
             if (!flowManager.HasConduit(_inputCell) || !_compressors.Any())
             {
                 OnMassTransfer(0.0f);
@@ -88,47 +89,37 @@ namespace QuantumCompressors.Classes
                 ConduitFlow.Conduit conduit = flowManager.GetConduit(_inputCell);
                 ConduitFlow.ConduitContents contents = conduit.GetContents(flowManager);
 
-                List<Storage> usableStorageListOrdered = _compressors
+                List<QuantumCompressorComponent> usableCompressorListOrdered = _compressors
                 .Where(c => c.GetSelectedTag == contents.element.CreateTag())
-                .Select(c => c.GetComponent<Storage>())
                 .Union(_compressors
-                .Where(c => c.GetSelectedTag.Name.Equals("void", StringComparison.InvariantCultureIgnoreCase))
-                .Select(c => c.GetComponent<Storage>()))
+                .Where(c => c.GetSelectedTag.Name.Equals("void", StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
                 float transferInMass = Mathf.Min(contents.mass, _currentFlow * dt);
-                float transferOutMass = Mathf.Min(transferInMass, RemainingStorageCapacity(usableStorageListOrdered));
+                float transferOutMass = Mathf.Min(transferInMass, RemainingStorageCapacity(usableCompressorListOrdered));
                 if (transferOutMass > 0f)
                 {
-                    
+                    activeFlag = true;
                     int disease_count = (int)(contents.diseaseCount * (transferOutMass / contents.mass));
-                    TransferElement(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, usableStorageListOrdered, false);
+                    TransferElement(contents.element, transferOutMass, contents.temperature, contents.diseaseIdx, disease_count, true, usableCompressorListOrdered, false);
                     Game.Instance.accumulators.Accumulate(flowAccumulator, transferOutMass);
                     flowManager.RemoveElement(_inputCell, transferOutMass);
                 }
                 OnMassTransfer(transferOutMass);
                 UpdateAnim();
             }
+            _operational.SetActive(activeFlag);
         }
 
-        void TransferElement(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, List<Storage> usableStorages, bool do_disease_transfer = true)
+        void TransferElement(SimHashes element, float mass, float temperature, byte disease_idx, int disease_count, bool keep_zero_mass, List<QuantumCompressorComponent> usableCompressors, bool do_disease_transfer = true)
         {
             
-            foreach (Storage storage in usableStorages)
+            foreach (QuantumCompressorComponent compressor in usableCompressors)
             {
-                float remainingCap = storage.RemainingCapacity();
+                float remainingCap = compressor.RemainingCapacity();
                 float transferrableMass = Mathf.Min(mass, remainingCap);
                 int transferrableDiseases = mass - transferrableMass == 0 ? disease_count : disease_count * Convert.ToInt32(transferrableMass / mass);
-                switch (conduitType)
-                {
-                    case ConduitType.Gas:
-                        storage.AddGasChunk(element, transferrableMass, temperature, disease_idx, transferrableDiseases, keep_zero_mass, do_disease_transfer);
-                        break;
-                    case ConduitType.Liquid:
-                        storage.AddLiquid(element, transferrableMass, temperature, disease_idx, transferrableDiseases, keep_zero_mass, do_disease_transfer);
-                        break;
-                }
-                
+                compressor.AddElementChunk(element, transferrableMass, temperature, disease_idx, transferrableDiseases, keep_zero_mass, do_disease_transfer);
                 mass -= transferrableMass;
                 disease_count -= transferrableDiseases;
                 if(mass == 0)
