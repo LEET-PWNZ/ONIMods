@@ -17,7 +17,6 @@ namespace QuantumCompressors.Classes
         private Operational _operational;
         private static readonly EventSystem.IntraObjectHandler<QuantumOperationalOutlet> OnOperationalChangedDelegate = new EventSystem.IntraObjectHandler<QuantumOperationalOutlet>(((component, mustOperare) => component.OnOperationalChanged((bool)mustOperare)));
         private bool _isDispensing;
-        [SerializeField]
         public ConduitPortInfo portInfo;
         [MyCmpGet]
         protected KBatchedAnimController controller;
@@ -41,6 +40,7 @@ namespace QuantumCompressors.Classes
         [SerializeField]
         private List<Storage> _compressorStorages = new List<Storage>();
         private QuantumStorageManager _quantumStorageManager = QuantumStorageManager.Instance;
+        private int _worldId;
         private void OnOperationalChanged(bool mustOperate)=> _operational.SetActive(mustOperate);
 
         protected void OnMassTransfer(float amount) => _isDispensing = amount > 0f;
@@ -57,6 +57,7 @@ namespace QuantumCompressors.Classes
         {
             OnOperationalChanged(_operational.IsOperational);
             base.OnSpawn();
+            _worldId = this.GetMyWorldId();
             _filteredCell = Grid.OffsetCell(Grid.PosToCell(transform.GetPosition()), building.GetRotatedOffset(portInfo.offset));
             IUtilityNetworkMgr utilityNetworkMgr = Conduit.GetNetworkManager(portInfo.conduitType);
             _itemFilter = new FlowUtilityNetwork.NetworkItem(portInfo.conduitType, Endpoint.Source, _filteredCell, gameObject);
@@ -84,12 +85,9 @@ namespace QuantumCompressors.Classes
 
         private void UpdateCompressors()
         {
-            _compressors = _quantumStorageManager.ActiveStorages
-                .FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId()
-                && s.conduitType == portInfo.conduitType
-                && s.GetComponent<Operational>().IsOperational)
-                .ToList();
-            _compressorStorages = _compressors.Select(c => c.GetComponent<Storage>()).ToList();
+            _compressors = _quantumStorageManager
+                .FindStorage(portInfo.conduitType, _worldId);
+            _compressorStorages = _compressors.Select(c => c.GetStorage()).ToList();
         }
 
         private void ConduitUpdate(float dt)
@@ -133,18 +131,19 @@ namespace QuantumCompressors.Classes
         private int _elementOutputOffset = 0;
         private PrimaryElement FindSuitableElement(out Storage usedStorage)
         {
-            foreach (Storage storage in _compressorStorages)
+            // Iterate in reverse for LIFO buffering
+            for (int i = _compressorStorages.Count(); i > 0; i--)
             {
-                List<GameObject> availableItems = storage.items.Where(i => i.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
+                List<GameObject> availableItems = _compressorStorages[i].items.Where(s => s.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
                 int filteredCount = availableItems.Count;
-                for (int i = 0; i < filteredCount; i++)
+                for (int j = 0; j < filteredCount; j++)
                 {
-                    int elemIndex = (i + _elementOutputOffset) % filteredCount;
+                    int elemIndex = (j + _elementOutputOffset) % filteredCount;
                     PrimaryElement component = availableItems[elemIndex].GetComponent<PrimaryElement>();
                     if (component != null && component.Mass > 0f)
                     {
                         _elementOutputOffset = (_elementOutputOffset + 1) % filteredCount;
-                        usedStorage = storage;
+                        usedStorage = _compressorStorages[i];
                         return component;
                     }
                 }

@@ -30,6 +30,7 @@ namespace QuantumCompressors.Classes
         [SerializeField]
         private List<QuantumCompressorComponent> _compressors = new List<QuantumCompressorComponent>();
         private QuantumStorageManager _quantumStorageManager = QuantumStorageManager.Instance;
+        private int _worldId;
         private void OnOperationalChanged(bool mustOperate)
         {
             if (mustOperate)
@@ -52,6 +53,7 @@ namespace QuantumCompressors.Classes
         {
             OnOperationalChanged(_operational.IsOperational);
             base.OnSpawn();
+            _worldId = this.GetMyWorldId();
             _inputCell = building.GetUtilityInputCell();
             Conduit.GetFlowManager(conduitType).AddConduitUpdater(new Action<float>(ConduitUpdate), ConduitFlowPriority.Default);
             UpdateAnim();
@@ -60,11 +62,8 @@ namespace QuantumCompressors.Classes
 
         private void UpdateCompressors()
         {
-            _compressors = _quantumStorageManager.ActiveStorages
-                .FindStorage(s => s.GetMyWorldId() == this.GetMyWorldId() 
-                && s.conduitType == conduitType 
-                && s.GetComponent<Operational>().IsOperational)
-                .ToList();
+            _compressors = _quantumStorageManager
+                .FindStorage(conduitType, _worldId);
         }
 
         private float RemainingStorageCapacity(List<QuantumCompressorComponent> usableCompressors)

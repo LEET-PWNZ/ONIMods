@@ -28,12 +28,18 @@ namespace QuantumCompressors.Classes
         private static StatusItem _filterStatusItem;
         [MyCmpReq]
         private Storage _storage;
+        private int _worldId;
 
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
             InitializeStatusItems();
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+        }
+
+        public int GetWorldId()
+        {
+            return _worldId;
         }
 
         public float RemainingCapacity()
@@ -54,6 +60,16 @@ namespace QuantumCompressors.Classes
             }
         }
 
+        public bool IsOperational()
+        {
+            return _operational.IsOperational;
+        }
+
+        public Storage GetStorage()
+        {
+            return _storage;
+        }
+
         protected override void OnSpawn()
         {
             OnOperationalChanged(_operational.IsOperational);
@@ -61,7 +77,8 @@ namespace QuantumCompressors.Classes
             OnFilterChanged(_filterable.SelectedTag);
             _filterable.onFilterChanged += new Action<Tag>(OnFilterChanged);
             _selectable.SetStatusItem(Db.Get().StatusItemCategories.Main, _filterStatusItem, this);
-            if (!_quantumStorageManager.ActiveStorages.Contains(this)) _quantumStorageManager.ActiveStorages.Add(this);
+            _worldId = this.GetMyWorldId();
+            _quantumStorageManager.AddStorage(this, conduitType);
             OnCmpEnable();
         }
 
@@ -73,7 +90,7 @@ namespace QuantumCompressors.Classes
         protected override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
-            if (_quantumStorageManager.ActiveStorages.Contains(this)) _quantumStorageManager.ActiveStorages.Remove(this);
+            _quantumStorageManager.RemoveStorage(this, conduitType);
             base.OnCleanUp();
         }
 

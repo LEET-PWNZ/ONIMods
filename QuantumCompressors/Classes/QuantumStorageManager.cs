@@ -9,10 +9,55 @@ namespace QuantumCompressors.Classes
     public class QuantumStorageManager
     {
         private static QuantumStorageManager _instance;
-        public readonly QuantumCompressorComponentList ActiveStorages;
+        private readonly List<QuantumCompressorComponent> _activeGasStorages;
+        private readonly List<QuantumCompressorComponent> _activeLiquidStorages;
         private QuantumStorageManager()
         {
-            ActiveStorages = new QuantumCompressorComponentList();
+            _activeGasStorages = new List<QuantumCompressorComponent>();
+            _activeLiquidStorages = new List<QuantumCompressorComponent>();
+        }
+
+        public void AddStorage(QuantumCompressorComponent storage, ConduitType conduitType)
+        {
+            switch (conduitType)
+            {
+                case ConduitType.Gas:
+                    if (!_activeGasStorages.Contains(storage)) _activeGasStorages.Add(storage);
+                    break;
+                case ConduitType.Liquid:
+                    if (!_activeLiquidStorages.Contains(storage)) _activeLiquidStorages.Add(storage);
+                    break;
+            }
+        }
+
+        public void RemoveStorage(QuantumCompressorComponent storage, ConduitType conduitType)
+        {
+            switch (conduitType)
+            {
+                case ConduitType.Gas:
+                    if (_activeGasStorages.Contains(storage)) _activeGasStorages.Remove(storage);
+                    break;
+                case ConduitType.Liquid:
+                    if (_activeLiquidStorages.Contains(storage)) _activeLiquidStorages.Remove(storage);
+                    break;
+            }
+        }
+
+        public List<QuantumCompressorComponent> FindStorage(ConduitType conduitType, int worldId)
+        {
+            List<QuantumCompressorComponent> returnResult = new List<QuantumCompressorComponent>();
+            switch (conduitType)
+            {
+                case ConduitType.Gas:
+                    _activeGasStorages.RemoveAll(i => i == null);
+                    returnResult = _activeGasStorages.Where(s => s.GetWorldId() == worldId && s.IsOperational()).ToList();
+                    break;
+                case ConduitType.Liquid:
+                    _activeLiquidStorages.RemoveAll(i => i == null);
+                    returnResult = _activeLiquidStorages.Where(s => s.GetWorldId() == worldId && s.IsOperational()).ToList();
+                    break;
+            }
+            return returnResult;
         }
 
         public static QuantumStorageManager Instance
@@ -24,36 +69,6 @@ namespace QuantumCompressors.Classes
             }
         }
 
-    }
-
-    public class QuantumCompressorComponentList : List<QuantumCompressorComponent>
-    {
-        public QuantumCompressorComponentList():base(new List<QuantumCompressorComponent>()){}
-
-        public new bool Contains(QuantumCompressorComponent item)
-        {
-            RemoveAll(i => i == null);
-            return base.Contains(item);
-        }
-
-        public new void Add(QuantumCompressorComponent item)
-        {
-            RemoveAll(i => i == null);
-            base.Add(item);
-        }
-
-        public new void Remove(QuantumCompressorComponent item)
-        {
-            RemoveAll(i => i == null);
-            base.Remove(item);
-        }
-
-
-        public IEnumerable<QuantumCompressorComponent> FindStorage(Func<QuantumCompressorComponent, bool> predicate)
-        {
-            RemoveAll(i => i == null);
-            return this.Where(predicate);
-        }
     }
 
 }
