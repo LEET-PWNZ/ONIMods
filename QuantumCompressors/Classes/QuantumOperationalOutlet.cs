@@ -134,7 +134,8 @@ namespace QuantumCompressors.Classes
             // Iterate in reverse for LIFO buffering
             for (int i = _compressorStorages.Count(); i > 0; i--)
             {
-                List<GameObject> availableItems = _compressorStorages[i].items.Where(s => s.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
+                int index = i - 1;
+                List<GameObject> availableItems = _compressorStorages[index].items.Where(s => s.GetComponent<PrimaryElement>().ElementID.CreateTag() == _filterable.SelectedTag).ToList();
                 int filteredCount = availableItems.Count;
                 for (int j = 0; j < filteredCount; j++)
                 {
@@ -143,7 +144,7 @@ namespace QuantumCompressors.Classes
                     if (component != null && component.Mass > 0f)
                     {
                         _elementOutputOffset = (_elementOutputOffset + 1) % filteredCount;
-                        usedStorage = _compressorStorages[i];
+                        usedStorage = _compressorStorages[index];
                         return component;
                     }
                 }
