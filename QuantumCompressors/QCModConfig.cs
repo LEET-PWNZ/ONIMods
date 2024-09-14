@@ -7,7 +7,7 @@ namespace QuantumCompressors
         public override QCModConfig GetDefaultConfig()
         {
             return new QCModConfig {
-                gasStorageCapacityKg = 3000f,
+                gasStorageCapacityKg = 20000f,
                 liquidStorageCapacityKg = 100000f,
                 storagePowerConsumption = 240f,
                 portPowerConsumption = 10f,
